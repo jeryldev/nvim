@@ -5,16 +5,7 @@ return {
     priority = 1000,
     opts = {
       servers = {
-        -- Expert Elixir LSP (new official Elixir language server)
-        lexical = {
-          cmd = { vim.fn.expand("~/.local/bin/expert/apps/expert/burrito_out/expert_darwin_arm64") },
-          root_dir = function(fname)
-            local util = require("lspconfig.util")
-            return util.root_pattern("mix.exs", ".git")(fname) or vim.loop.cwd()
-          end,
-          filetypes = { "elixir", "eelixir", "heex", "surface" },
-          settings = {},
-        },
+        -- NOTE: Elixir LSP (Expert) is configured in expert-lsp.lua
         emmet_language_server = {
           filetypes = {
             "css",
@@ -65,27 +56,7 @@ return {
         },
       },
       setup = {
-        -- Setup for Expert Elixir LSP (lexical)
-        lexical = function(_, opts)
-          local lspconfig = require("lspconfig")
-          local configs = require("lspconfig.configs")
-
-          -- Define lexical configuration if it doesn't exist
-          if not configs.lexical then
-            configs.lexical = {
-              default_config = {
-                cmd = opts.cmd,
-                filetypes = opts.filetypes,
-                root_dir = opts.root_dir,
-                settings = opts.settings or {},
-              },
-            }
-          end
-
-          -- Setup the server
-          lspconfig.lexical.setup(opts)
-          return true -- Prevent LazyVim from trying to set it up again
-        end,
+        -- NOTE: Expert Elixir LSP setup is in expert-lsp.lua
         tailwindcss = function(_, opts)
           -- Setup filetypes
           opts.filetypes = opts.filetypes or {}

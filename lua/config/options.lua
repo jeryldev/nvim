@@ -6,3 +6,6 @@ vim.g.lazyvim_php_lsp = "intelephense"
 vim.g.lazyvim_python_lsp = "pyright"
 vim.g.lazyvim_python_ruff = "ruff"
 vim.g.lazyvim_prettier_needs_config = true
+
+-- Enable autoformat on save (LazyVim default, but explicitly set)
+vim.g.autoformat = true

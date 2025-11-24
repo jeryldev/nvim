@@ -13,13 +13,6 @@
 -- - TermOpen: Auto-activation in terminals when auto_activate_venv = true
 -- See: https://github.com/jeryldev/pyworks.nvim
 
--- Debug: Log when Elixir files are saved
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = { "*.ex", "*.exs", "*.heex" },
-  callback = function()
-    -- Check if autoformat is enabled
-    if vim.g.autoformat == false then
-      vim.notify("Autoformat is disabled. Toggle with <leader>uf", vim.log.levels.WARN)
-    end
-  end,
-})
+-- Format-on-save is now handled in lua/plugins/expert-lsp.lua
+-- via conform.nvim's BufWritePre autocmd
+-- Toggle autoformat with <leader>uf (LazyVim default)

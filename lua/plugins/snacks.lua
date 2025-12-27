@@ -20,6 +20,21 @@ return {
         },
       }
 
+      -- Show hidden files (dotfiles) and gitignored files
+      opts.picker.sources = opts.picker.sources or {}
+      opts.picker.sources.files = {
+        hidden = true,
+        ignored = true,
+      }
+      opts.picker.sources.grep = {
+        hidden = true,
+        ignored = true,
+      }
+      opts.picker.sources.explorer = {
+        hidden = true,
+        ignored = true,
+      }
+
       return opts
     end,
   },

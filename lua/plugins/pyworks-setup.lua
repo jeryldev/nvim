@@ -1,10 +1,7 @@
 -- Simplified pyworks.nvim setup - Auto-configures all dependencies!
 return {
   {
-    -- Using local version for testing our changes
-    dir = "/Users/jeryldev/PycharmProjects/iron_training/pyworks.nvim",
-    -- For production, use the remote repository:
-    -- "jeryldev/pyworks.nvim",
+    "jeryldev/pyworks.nvim",
     dependencies = {
       {
         "GCBallesteros/jupytext.nvim",
@@ -30,22 +27,34 @@ return {
           end
 
           if has_jupytext then
-            require("jupytext").setup()
+            -- Configure jupytext with percent style (for Python cells with # %%)
+            -- NOTE: This is the ONLY place jupytext.setup() should be called
+            -- Calling it multiple times causes BufWriteCmd race conditions
+            require("jupytext").setup({
+              style = "percent",
+              output_extension = "auto",
+              force_ft = nil,
+              custom_language_formatting = {
+                python = { extension = "py", style = "percent" },
+                julia = { extension = "jl", style = "percent" },
+                r = { extension = "R", style = "percent" },
+              },
+            })
           else
             -- Don't setup jupytext, let pyworks handle notebooks
             -- Disable jupytext.nvim's handler since it will fail anyway
-            pcall(vim.api.nvim_clear_autocmds, { 
+            pcall(vim.api.nvim_clear_autocmds, {
               group = "jupytext.nvim",
-              pattern = "*.ipynb"
+              pattern = "*.ipynb",
             })
-            
+
             vim.api.nvim_create_autocmd("BufReadCmd", {
               group = vim.api.nvim_create_augroup("PyworksNotebook", { clear = true }),
               pattern = "*.ipynb",
               callback = function(ev)
                 -- Prevent other handlers from running
                 vim.api.nvim_buf_set_var(ev.buf, "jupytext_handled", true)
-                
+
                 -- Get the buffer name which should be the file path
                 local filepath = vim.api.nvim_buf_get_name(ev.buf)
 
@@ -109,15 +118,15 @@ return {
         end,
       },
       "nvim-lua/plenary.nvim", -- Required: Core utilities
-      "benlubas/molten-nvim", -- Required: Code execution
-      "3rd/image.nvim", -- Required: Image display
+      "benlubas/molten-nvim",  -- Required: Code execution
+      "3rd/image.nvim",        -- Required: Image display
     },
     config = function()
       require("pyworks").setup({
         -- Pyworks auto-configures everything with your proven settings!
         -- Just specify any preferences:
         python = {
-          use_uv = true, -- Use uv for faster package installation
+          use_uv = true,         -- Use uv for faster package installation
         },
         image_backend = "kitty", -- Ghostty supports Kitty graphics protocol
 
@@ -128,7 +137,7 @@ return {
         -- skip_keymaps = false,
       })
     end,
-    lazy = false, -- Load immediately for file detection
+    lazy = false,   -- Load immediately for file detection
     priority = 100, -- Load early
   },
 }

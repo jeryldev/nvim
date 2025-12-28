@@ -1,6 +1,9 @@
 -- Simplified pyworks.nvim setup - Auto-configures all dependencies!
 return {
   {
+    -- Using local version for testing our changes
+    -- dir = "/Users/jeryldev/PycharmProjects/iron_training/pyworks.nvim",
+    -- For production, use the remote repository:
     "jeryldev/pyworks.nvim",
     dependencies = {
       {

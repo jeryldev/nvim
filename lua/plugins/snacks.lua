@@ -20,19 +20,20 @@ return {
         },
       }
 
-      -- Show hidden files (dotfiles) and gitignored files
+      -- Hidden files (dotfiles) and gitignored files are hidden by default
+      -- Toggle with H (normal) or <Alt-h> (insert/normal) inside the picker
       opts.picker.sources = opts.picker.sources or {}
       opts.picker.sources.files = {
-        hidden = true,
-        ignored = true,
+        hidden = false,
+        ignored = false,
       }
       opts.picker.sources.grep = {
-        hidden = true,
-        ignored = true,
+        hidden = false,
+        ignored = false,
       }
       opts.picker.sources.explorer = {
-        hidden = true,
-        ignored = true,
+        hidden = false,
+        ignored = false,
       }
 
       return opts

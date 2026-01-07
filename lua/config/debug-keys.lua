@@ -2,7 +2,30 @@
 -- Usage: Add `require("config.debug-keys")` to init.lua to enable
 local log_file = vim.fn.stdpath("cache") .. "/keypress-debug.log"
 
+local log_buffer = {}
+local flush_timer = nil
+local on_key_ns = nil
+
+local function flush_logs()
+  if #log_buffer > 0 then
+    local f = io.open(log_file, "a")
+    if f then
+      f:write(table.concat(log_buffer, "\n") .. "\n")
+      f:close()
+    end
+    log_buffer = {}
+  end
+  flush_timer = nil
+end
+
 local function log(msg)
+  table.insert(log_buffer, os.date("%Y-%m-%d %H:%M:%S") .. " | " .. msg)
+  if not flush_timer then
+    flush_timer = vim.defer_fn(flush_logs, 2000)
+  end
+end
+
+local function log_immediate(msg)
   local f = io.open(log_file, "a")
   if f then
     f:write(os.date("%Y-%m-%d %H:%M:%S") .. " | " .. msg .. "\n")
@@ -17,11 +40,11 @@ if f then
   f:close()
 end
 
-log("Neovim version: " .. vim.version().major .. "." .. vim.version().minor .. "." .. vim.version().patch)
-log("Log file: " .. log_file)
+log_immediate("Neovim version: " .. vim.version().major .. "." .. vim.version().minor .. "." .. vim.version().patch)
+log_immediate("Log file: " .. log_file)
 
--- Log all keypresses in normal mode
-vim.on_key(function(key, typed)
+-- Log all keypresses (batched every 2 seconds to avoid disk thrashing)
+on_key_ns = vim.on_key(function(key, typed)
   if key and #key > 0 then
     local mode = vim.api.nvim_get_mode().mode
     local key_repr = vim.fn.keytrans(key)
@@ -30,35 +53,43 @@ vim.on_key(function(key, typed)
   end
 end)
 
--- Log when exiting
+-- Flush logs and cleanup on exit
 vim.api.nvim_create_autocmd("VimLeavePre", {
   callback = function()
-    log("=== VimLeavePre triggered - Neovim is exiting ===")
+    log_immediate("=== VimLeavePre triggered - Neovim is exiting ===")
+    flush_logs()
+    if on_key_ns then
+      vim.on_key(nil, on_key_ns)
+    end
   end,
 })
 
-vim.api.nvim_create_autocmd("ExitPre", {
-  callback = function()
-    log("=== ExitPre triggered ===")
-  end,
-})
-
--- Check what : is mapped to
+-- Check what : is mapped to (one-time startup check)
 vim.defer_fn(function()
   local colon_map = vim.fn.maparg(":", "n")
   if colon_map and colon_map ~= "" then
-    log("WARNING: ':' is remapped to: " .. colon_map)
+    log_immediate("WARNING: ':' is remapped to: " .. colon_map)
   else
-    log("':' has no custom mapping (using default)")
+    log_immediate("':' has no custom mapping (using default)")
   end
 
-  -- Also check ; since user mentioned shift+;
   local semicolon_map = vim.fn.maparg(";", "n")
   if semicolon_map and semicolon_map ~= "" then
-    log("';' is mapped to: " .. semicolon_map)
+    log_immediate("';' is mapped to: " .. semicolon_map)
   end
 end, 1000)
 
 vim.notify("Debug logging enabled: " .. log_file, vim.log.levels.INFO)
 
-return {}
+return {
+  disable = function()
+    flush_logs()
+    if on_key_ns then
+      vim.on_key(nil, on_key_ns)
+      on_key_ns = nil
+    end
+    vim.notify("Debug logging disabled", vim.log.levels.INFO)
+  end,
+  flush = flush_logs,
+  log_file = log_file,
+}

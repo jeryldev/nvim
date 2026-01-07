@@ -32,3 +32,8 @@ vim.keymap.set("n", "<leader>or", ":ObsidianRename ", { desc = "Obsidian: Rename
 vim.keymap.set("n", "<leader>op", ":ObsidianPasteImg ", { desc = "Obsidian: Paste image" })
 vim.keymap.set("n", "<leader>oo", ":ObsidianOpen<CR>", { desc = "Obsidian: Open in app" })
 vim.keymap.set("n", "<leader>ow", ":ObsidianWorkspace ", { desc = "Obsidian: Switch workspace" })
+
+-- Find hidden + gitignored files (including .research/, .claude/, etc.)
+vim.keymap.set("n", "<leader>fh", function()
+  Snacks.picker.files({ hidden = true, ignored = true })
+end, { desc = "Find hidden files" })

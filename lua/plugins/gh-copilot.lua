@@ -13,7 +13,10 @@ return {
         -- Jupyter notebooks converted by jupytext become python filetype
         -- but we also explicitly allow these just in case
         ["*"] = function()
-          -- Disable for very large files (performance)
+          -- Disable for large files to avoid completion latency
+          -- 5000 lines threshold: Copilot sends buffer context to API,
+          -- causing noticeable delays in files larger than this.
+          -- Common for generated files, minified code, or data files.
           if vim.api.nvim_buf_line_count(0) > 5000 then
             return false
           end

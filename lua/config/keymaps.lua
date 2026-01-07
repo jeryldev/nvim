@@ -2,6 +2,9 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
+-- Redo (U is more convenient than C-r which gets intercepted by terminal/tmux)
+vim.keymap.set("n", "U", "<C-r>", { desc = "Redo" })
+
 -- Copy relative path from project root
 vim.keymap.set("n", "<leader>cy", function()
   local root = vim.fn.systemlist("git rev-parse --show-toplevel")[1]

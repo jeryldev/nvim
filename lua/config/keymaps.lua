@@ -35,5 +35,6 @@ vim.keymap.set("n", "<leader>ow", ":ObsidianWorkspace ", { desc = "Obsidian: Swi
 
 -- Find hidden + gitignored files (including .research/, .claude/, etc.)
 vim.keymap.set("n", "<leader>fh", function()
-  Snacks.picker.files({ hidden = true, ignored = true })
+  local snacks = require("snacks")
+  snacks.picker.files({ hidden = true, ignored = true })
 end, { desc = "Find hidden files" })

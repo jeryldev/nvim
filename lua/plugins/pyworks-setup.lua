@@ -1,31 +1,16 @@
 -- Simplified pyworks.nvim setup
--- Pyworks now handles jupytext configuration and fallback internally
+-- Pyworks handles .ipynb files directly using jupytext CLI (no jupytext.nvim needed)
 -- Set PYWORKS_DEV=/path/to/local/pyworks.nvim to use local version
 local pyworks_dev_path = os.getenv("PYWORKS_DEV")
 
 local pyworks_spec = {
   dir = pyworks_dev_path,
   dependencies = {
-    {
-      "GCBallesteros/jupytext.nvim",
-      config = false, -- Let pyworks handle jupytext configuration
-    },
-    {
-      "benlubas/molten-nvim",
-      init = function()
-        vim.g.molten_show_mimetype_debug = false
-        vim.g.molten_enter_output_behavior = "open_float"
-      end,
-    },
+    "benlubas/molten-nvim",
     "3rd/image.nvim",
   },
   config = function()
-    require("pyworks").setup({
-      python = {
-        use_uv = true, -- Use uv for faster package installation
-      },
-      image_backend = "kitty", -- Ghostty supports Kitty graphics protocol
-    })
+    require("pyworks").setup() -- Uses defaults: uv=true, image_backend="kitty"
   end,
   lazy = false, -- Load immediately for file detection
   priority = 100, -- Load early

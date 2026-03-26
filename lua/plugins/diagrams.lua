@@ -1,6 +1,6 @@
 return {
   {
-    "3rd/image.nvim",
+    "jeryldev/image.nvim",
     build = false,
     opts = {
       processor = "magick_cli",
@@ -12,7 +12,7 @@ return {
   {
     "3rd/diagram.nvim",
     dependencies = {
-      "3rd/image.nvim",
+      "jeryldev/image.nvim",
     },
 
     config = function()

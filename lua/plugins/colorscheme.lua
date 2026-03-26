@@ -1,22 +1,13 @@
 return {
   {
-    "rebelot/kanagawa.nvim",
-    opts = {
-      colors = {
-        theme = {
-          all = {
-            ui = {
-              bg_gutter = "none",
-            },
-          },
-        },
-      },
-    },
+    "jeryldev/citruszest-ghostty.nvim",
+    lazy = false,
+    priority = 1000,
   },
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "kanagawa-wave",
+      colorscheme = "citruszest-ghostty",
     },
   },
 }

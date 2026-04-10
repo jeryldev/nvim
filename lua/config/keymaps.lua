@@ -20,21 +20,26 @@ vim.keymap.set("n", "<leader>cy", function()
   vim.notify("Copied: " .. relative_path, vim.log.levels.INFO)
 end, { desc = "Copy relative file path" })
 
--- Obsidian.nvim keymaps
-vim.keymap.set("n", "<leader>on", ":ObsidianNew ", { desc = "Obsidian: New note" })
-vim.keymap.set("n", "<leader>ot", ":ObsidianToday<CR>", { desc = "Obsidian: Today's note" })
-vim.keymap.set("n", "<leader>oy", ":ObsidianYesterday<CR>", { desc = "Obsidian: Yesterday's note" })
-vim.keymap.set("n", "<leader>of", ":ObsidianQuickSwitch<CR>", { desc = "Obsidian: Find note" })
-vim.keymap.set("n", "<leader>os", ":ObsidianSearch ", { desc = "Obsidian: Search notes" })
-vim.keymap.set("n", "<leader>oT", ":ObsidianTemplate ", { desc = "Obsidian: Insert template" })
-vim.keymap.set("n", "<leader>ob", ":ObsidianBacklinks<CR>", { desc = "Obsidian: Show backlinks" })
-vim.keymap.set("n", "<leader>og", ":ObsidianTags<CR>", { desc = "Obsidian: Browse tags" })
-vim.keymap.set("n", "<leader>ol", ":ObsidianLink ", { desc = "Obsidian: Link to note" })
-vim.keymap.set("n", "<leader>oL", ":ObsidianLinkNew ", { desc = "Obsidian: Create new link" })
-vim.keymap.set("n", "<leader>or", ":ObsidianRename ", { desc = "Obsidian: Rename note" })
-vim.keymap.set("n", "<leader>op", ":ObsidianPasteImg ", { desc = "Obsidian: Paste image" })
-vim.keymap.set("n", "<leader>oo", ":ObsidianOpen<CR>", { desc = "Obsidian: Open in app" })
-vim.keymap.set("n", "<leader>ow", ":ObsidianWorkspace ", { desc = "Obsidian: Switch workspace" })
+-- Zig keymaps (buffer-local, only active in .zig files)
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "zig",
+  callback = function(event)
+    vim.keymap.set("n", "<leader>zt", function()
+      vim.fn.jobstart("zig build test 2>&1", {
+        stdout_buffered = true,
+        stderr_buffered = true,
+        on_stdout = function(_, data)
+          local output = table.concat(data, "\n"):gsub("^%s+", ""):gsub("%s+$", "")
+          if output == "" then
+            vim.schedule(function() vim.notify("zig build test: ALL PASSED", vim.log.levels.INFO) end)
+          else
+            vim.schedule(function() vim.notify(output, vim.log.levels.ERROR) end)
+          end
+        end,
+      })
+    end, { buffer = event.buf, desc = "Zig: Build & test" })
+  end,
+})
 
 -- Find hidden + gitignored files (including .research/, .claude/, etc.)
 vim.keymap.set("n", "<leader>fh", function()

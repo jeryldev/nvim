@@ -1,8 +1,6 @@
 return {
   {
     "neovim/nvim-lspconfig",
-    lazy = false,
-    priority = 1000,
     opts = {
       servers = {
         -- NOTE: Elixir LSP (Expert) is configured in expert-lsp.lua
